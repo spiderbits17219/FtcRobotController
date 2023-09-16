@@ -161,6 +161,7 @@ The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc
 * Fixes Emergency Stop condition when an OnBotJava build with duplicate OpMode names occurs.
 * Fixes known causes of "Attempted use of a closed LynxModule instance" logspam.
 * Fixes the visual identification LED pattern when configuring Expansion Hubs connected via RS-485.
+* hey!!!! test
 
 ## Version 8.1.1 (20221201-150726)
 
