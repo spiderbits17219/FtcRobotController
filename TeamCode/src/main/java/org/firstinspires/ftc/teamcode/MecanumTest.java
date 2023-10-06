@@ -52,15 +52,22 @@ public class MecanumTest extends LinearOpMode{
 
 
         while (opModeIsActive()) {
-            float xpower = gamepad1.left_stick_x;
-            float ypower = -gamepad1.left_stick_y;
-            float rpower = gamepad1.right_stick_x;
-            float denom = Math.max(Math.abs(ypower)+Math.abs(xpower)-Math.abs(rpower),1);
+            double xpower = gamepad1.left_stick_x;
+            double  ypower = -gamepad1.left_stick_y;
+            double  rpower = gamepad1.right_stick_x;
+            double denom = Math.max(Math.abs(ypower)+Math.abs(xpower)-Math.abs(rpower),1);
 
-            float frontLeftPower = (xpower + ypower + rpower)/denom;
-            float frontRightPower = (ypower - xpower - rpower)/denom;
-            float backLeftPower = (ypower - xpower + rpower)/denom;
-            float backRightPower = (ypower + xpower - rpower)/denom;
+            double frontLeftPower = (xpower + ypower + rpower)/denom;
+            double frontRightPower = (ypower - xpower - rpower)/denom;
+            double backLeftPower = (ypower - xpower + rpower)/denom;
+            double backRightPower = (ypower + xpower - rpower)/denom;
+
+            if(gamepad1.left_trigger > 0){
+                frontLeftPower = frontLeftPower / 3;
+                frontRightPower = frontRightPower / 3;
+                backLeftPower = backLeftPower / 3;
+                backRightPower = backRightPower / 3;
+            }
 
             frontLeft.setPower(frontLeftPower);
             frontRight.setPower(frontRightPower);
