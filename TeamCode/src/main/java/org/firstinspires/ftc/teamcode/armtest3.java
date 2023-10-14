@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.Range;
 
 @TeleOp
 
-public class armtest2 extends LinearOpMode {
+public class armtest3 extends LinearOpMode {
 
     //
 //    //     // Declare OpMode members.
@@ -101,26 +101,26 @@ public class armtest2 extends LinearOpMode {
 
 
             if(gamepad2.dpad_down){
-                armMotor.setPower(0.2);
+                armMotor.setPower(1);
                 armMotor.setTargetPosition(-5);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }else if(gamepad2.dpad_up){
-                armMotor.setPower(-0.8);
-                armMotor.setTargetPosition(-50);
+                armMotor.setPower(-1);
+                armMotor.setTargetPosition(-70);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
 
             if (gamepad2.a) {
-                rightServo.setPosition(0.2);
+                rightServo.setPosition(0.25);
             }
             if (gamepad2.b) {
-                rightServo.setPosition(1.5);
+                rightServo.setPosition(0.5);
             }
             if(gamepad2.x){
-                leftServo.setPosition(-0.2);
+                leftServo.setPosition(0.1);
             }
             if(gamepad2.y){
-                leftServo.setPosition(-1.5);
+                leftServo.setPosition(0.4);
             }
 
         }

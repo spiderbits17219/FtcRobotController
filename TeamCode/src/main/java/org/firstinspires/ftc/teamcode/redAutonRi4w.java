@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /*
@@ -62,8 +63,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Robot: Auto Drive By Encoder", group="Robot")
-public class RobotAutoDriveByEncoder_Linear extends LinearOpMode {
+@Autonomous(name="redAutonRi4w", group="Robot")
+public class redAutonRi4w extends LinearOpMode {
 
     /* Declare OpMode members. */
     private DcMotor frontLeft  = null;
@@ -72,6 +73,9 @@ public class RobotAutoDriveByEncoder_Linear extends LinearOpMode {
     private DcMotor backRight = null;
 
     private DcMotor armMotor = null;
+
+    private Servo leftServo = null;
+    private Servo rightServo = null;
     private ElapsedTime     runtime = new ElapsedTime();
 
     // Calculate the COUNTS_PER_INCH for your specific drive train.
@@ -84,7 +88,7 @@ public class RobotAutoDriveByEncoder_Linear extends LinearOpMode {
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
     static final double     WHEEL_DIAMETER_INCHES   = 3.779 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-                                                      (WHEEL_DIAMETER_INCHES * 3.14159);
+            (WHEEL_DIAMETER_INCHES * 3.14159);
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
 
@@ -97,6 +101,8 @@ public class RobotAutoDriveByEncoder_Linear extends LinearOpMode {
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         armMotor = hardwareMap.get(DcMotor.class, "armMotor");
+        leftServo = hardwareMap.get(Servo.class, "leftServo");
+        rightServo = hardwareMap.get(Servo.class, "rightServo");
 
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
@@ -107,6 +113,8 @@ public class RobotAutoDriveByEncoder_Linear extends LinearOpMode {
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.FORWARD);
         armMotor.setDirection(DcMotor.Direction.FORWARD);
+        leftServo.setDirection(Servo.Direction.REVERSE);
+        rightServo.setDirection(Servo.Direction.FORWARD);
 
         frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -124,10 +132,10 @@ public class RobotAutoDriveByEncoder_Linear extends LinearOpMode {
 
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Starting at",  "%7d :%7d",
-                          frontLeft.getCurrentPosition(),
-                          frontRight.getCurrentPosition(),
-                          backLeft.getCurrentPosition(),
-                          backRight.getCurrentPosition());
+                frontLeft.getCurrentPosition(),
+                frontRight.getCurrentPosition(),
+                backLeft.getCurrentPosition(),
+                backRight.getCurrentPosition());
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
@@ -136,7 +144,10 @@ public class RobotAutoDriveByEncoder_Linear extends LinearOpMode {
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         encoderDrive(DRIVE_SPEED,  3,  3, 3, 3, 20);
-        encoderDrive(DRIVE_SPEED,  90,  90, 90, 90, 20);
+        encoderDrive(DRIVE_SPEED,  50,  -50, -50, 50, 20);
+        leftServo.setPosition(0.4);
+        rightServo.setPosition(0.5);
+        encoderDrive(DRIVE_SPEED, -2, -2, -2 , -2 , 20);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -189,8 +200,6 @@ public class RobotAutoDriveByEncoder_Linear extends LinearOpMode {
             backRight.setPower(Math.abs(speed));
 
             armMotor.setPower(0.2);
-            armMotor.setTargetPosition(-10);
-            armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
@@ -199,14 +208,14 @@ public class RobotAutoDriveByEncoder_Linear extends LinearOpMode {
             // However, if you require that BOTH motors have finished their moves before the robot continues
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() &&
-                   (runtime.seconds() < timeoutS) &&
-                   (frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy()) ) {
+                    (runtime.seconds() < timeoutS) &&
+                    (frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy()) ) {
 
                 // Display it for the driver.
                 telemetry.addData("Running to",  " %7d :%7d", newLeftFrontTarget, newLeftBackTarget,
                         newRightFrontTarget, newRightBackTarget);
                 telemetry.addData("Currently at",  " at %7d :%7d",
-                                            frontLeft.getCurrentPosition(), frontRight.getCurrentPosition(),
+                        frontLeft.getCurrentPosition(), frontRight.getCurrentPosition(),
                         backLeft.getCurrentPosition(), backRight.getCurrentPosition());
                 telemetry.update();
             }
