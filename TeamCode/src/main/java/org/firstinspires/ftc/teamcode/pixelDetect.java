@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -47,6 +48,9 @@ public class pixelDetect extends OpenCvPipeline {
 
     static double THRESH = 0.35;
 
+    public pixelDetect(Telemetry t){
+        telemetry = t;
+    }
     public Mat processFrame(Mat input){
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGBA2RGB);
         Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGB2HSV);
