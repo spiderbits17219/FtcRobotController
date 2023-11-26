@@ -18,8 +18,8 @@ public class pixelAuto extends LinearOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id",
                 hardwareMap.appContext.getPackageName());
         cam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-
-        cam.setPipeline(new pixelDetect(telemetry));
+        pixelDetect detect = new pixelDetect(telemetry);
+        cam.setPipeline(detect);
         cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener(){
 
             @Override
