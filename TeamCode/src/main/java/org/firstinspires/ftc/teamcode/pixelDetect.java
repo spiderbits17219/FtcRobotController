@@ -21,19 +21,25 @@ public class pixelDetect extends OpenCvPipeline {
     pixelDetect pipeline;
 
     enum Place{
-        LEFT, CENTER, RIGHT
+        LEFT, CENTER, RIGHT, NONE
     }
+
+
     private Place place;
+
     Mat mat = new Mat();
 
     static final Scalar RED = new Scalar(255, 0, 0);
+    static final Scalar BLUE = new Scalar(0, 0, 255);
+    static final Scalar GREEN = new Scalar(0, 255, 0);
+
 
     //left area of each point, width and height of the subregion
     static final Point REGION1_LEFT = new Point(0,0);
-    static final Point REGION2_LEFT = new Point(0,0);
-    static final Point REGION3_LEFT = new Point(0,0);
-    static final int REGION_WIDTH = 0;
-    static final int REGION_HEIGHT = 0;
+    static final Point REGION2_LEFT = new Point(100,250);
+    static final Point REGION3_LEFT = new Point(200,500);
+    static final int REGION_WIDTH = 80;
+    static final int REGION_HEIGHT = 210;
 
     static Point region1_pointA = new Point(REGION1_LEFT.x, REGION1_LEFT.y);
     static Point region1_pointB = new Point(REGION1_LEFT.x + REGION_WIDTH, REGION1_LEFT.y + REGION_HEIGHT);
@@ -51,6 +57,7 @@ public class pixelDetect extends OpenCvPipeline {
     public pixelDetect(Telemetry t){
         telemetry = t;
     }
+
     public Mat processFrame(Mat input){
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGBA2RGB);
         Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGB2HSV);
@@ -77,20 +84,26 @@ public class pixelDetect extends OpenCvPipeline {
         boolean pixCenter = centerVal > THRESH;
         boolean pixRight = rightVal > THRESH;
 
+        Imgproc.rectangle(input, region2_pointA, region2_pointB, GREEN, 3);
+        Imgproc.rectangle(input, region3_pointA, region3_pointB, BLUE, 3);
+
+
         if(pixLeft && (leftVal > centerVal) && (leftVal > rightVal)){
             place = Place.LEFT;
-            Imgproc.rectangle(input, region1_pointA, region1_pointB, RED, 2);
             telemetry.addData("Location", "left");
+            Imgproc.rectangle(input, region1_pointA, region1_pointB, RED, 3);
 
         }else if(pixCenter && (centerVal > leftVal) && (centerVal > rightVal)){
             place = Place.CENTER;
-            Imgproc.rectangle(input, region2_pointA, region2_pointB, RED, 2);
             telemetry.addData("Location", "center");
+            Imgproc.rectangle(input, region2_pointA, region2_pointB, RED, 3);
         }else{
+
             place = Place.RIGHT;
-            Imgproc.rectangle(input, region3_pointA, region3_pointB, RED, 2);
             telemetry.addData("Location", "right");
+            Imgproc.rectangle(input, region2_pointA, region2_pointB, RED, 3);
         }
+
         telemetry.update();
 
         return mat;

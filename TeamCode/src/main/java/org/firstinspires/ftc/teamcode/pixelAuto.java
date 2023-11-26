@@ -3,13 +3,14 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
-@Autonomous(name="pixelAuto", group = "Auto")
+@Autonomous(name="pixelAuto", group = "Robot")
 public class pixelAuto extends LinearOpMode {
     OpenCvCamera cam;
     @Override
@@ -17,9 +18,8 @@ public class pixelAuto extends LinearOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id",
                 hardwareMap.appContext.getPackageName());
         cam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        pixelDetect detect = new pixelDetect(telemetry);
 
-        cam.setPipeline(detect);
+        cam.setPipeline(new pixelDetect(telemetry));
         cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener(){
 
             @Override
