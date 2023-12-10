@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -9,22 +10,26 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
+import org.openftc.easyopencv.OpenCvWebcam;
 
-@Autonomous(name="pixelAuto", group = "Robot")
+@TeleOp
 public class pixelAuto extends LinearOpMode {
-    OpenCvCamera cam;
+    OpenCvWebcam cam;
+
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode(){
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id",
                 hardwareMap.appContext.getPackageName());
         cam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         pixelDetect detect = new pixelDetect(telemetry);
         cam.setPipeline(detect);
-        cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener(){
+
+        cam.setMillisecondsPermissionTimeout(5000);
+        cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
 
             @Override
             public void onOpened() {
-                cam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
+                cam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -33,21 +38,25 @@ public class pixelAuto extends LinearOpMode {
 
         });
 
+        telemetry.addLine("Waiting for start");
+        telemetry.update();
+
         waitForStart();
-        switch (detect.getPlace()){
-            case LEFT:
+
+        while(opModeIsActive()){
+
+            pixelDetect.Place place = detect.getPlace();
+            if (place == pixelDetect.Place.LEFT) {
                 telemetry.addData("yay", 1);
                 telemetry.update();
-            break;
+            }else{
+                telemetry.addData("no", 1);
+            }
 
-            case CENTER:
-            break;
-
-            case RIGHT:
-            break;
-
+            sleep(100);
         }
-        cam.stopStreaming();
-    }
 
+
+
+    }
 }

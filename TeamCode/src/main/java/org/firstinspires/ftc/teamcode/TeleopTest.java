@@ -24,6 +24,7 @@ public class TeleopTest extends LinearOpMode{
 //    private droneServo = null;
 //    private rightServo = null;
 //    private leftServo = null;
+//    private newServo = null;
 
 
 
