@@ -78,8 +78,8 @@ public class AutonOpModeBlue extends LinearOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         //OpenCV Pipeline
-        BlueContourPipeline myPipeline;
-        webcam.setPipeline(myPipeline = new BlueContourPipeline(borderLeftX,borderRightX,borderTopY,borderBottomY));
+        BlueContourPipeline myPipeline = new BlueContourPipeline(borderLeftX,borderRightX,borderTopY,borderBottomY);
+        webcam.setPipeline(myPipeline);
         // Configuration of Pipeline
 
         // Webcam Streaming

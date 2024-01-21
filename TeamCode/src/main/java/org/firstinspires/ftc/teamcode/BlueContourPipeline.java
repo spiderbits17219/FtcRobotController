@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Canvas;
+
+import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
+import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -43,7 +47,6 @@ public class BlueContourPipeline extends OpenCvPipeline {
 
     private double maxArea = 0;
     private boolean first = false;
-
     private final Object sync = new Object();
 
     public BlueContourPipeline(double borderLeftX, double borderRightX, double borderTopY, double borderBottomY) {
@@ -186,4 +189,5 @@ public class BlueContourPipeline extends OpenCvPipeline {
             return maxRect.area();
         }
     }
+
 }

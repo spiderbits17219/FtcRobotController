@@ -239,7 +239,7 @@ public class WebcamExample extends LinearOpMode {
              * robot controller screen. For instance, this could be useful if you wish to see the live
              * camera preview as you are initializing your robot, but you no longer require the live
              * preview after you have finished your initialization process; pausing the viewport does
-             * not stop running your pipeline.
+             * not stop runing your pipeline.
              *
              * Here we demonstrate dynamically pausing/resuming the viewport when the user taps it
              */
