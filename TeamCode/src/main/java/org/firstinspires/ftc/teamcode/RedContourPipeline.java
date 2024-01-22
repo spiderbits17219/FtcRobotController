@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.graphics.Canvas;
-
-import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
-import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -20,7 +16,7 @@ import java.util.List;
 
 // Credits to team 7303 RoboAvatars, adjusted by team 3954 Pink to the Future, readjusted by team 17219 SpiderBits
 
-public class BlueContourPipeline extends OpenCvPipeline {
+public class RedContourPipeline extends OpenCvPipeline {
 
     public static Scalar lowHSV = new Scalar(96, 69, 137);
     public static Scalar highHSV = new Scalar(103, 118, 255);
@@ -49,7 +45,7 @@ public class BlueContourPipeline extends OpenCvPipeline {
     private boolean first = false;
     private final Object sync = new Object();
 
-    public BlueContourPipeline(double borderLeftX, double borderRightX, double borderTopY, double borderBottomY) {
+    public RedContourPipeline(double borderLeftX, double borderRightX, double borderTopY, double borderBottomY) {
         this.borderLeftX = borderLeftX;
         this.borderRightX = borderRightX;
         this.borderTopY = borderTopY;
