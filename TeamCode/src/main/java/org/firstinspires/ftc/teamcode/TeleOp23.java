@@ -19,18 +19,28 @@ public class TeleOp23 extends LinearOpMode {
     private DcMotor backLeft = null;
     private DcMotor backRight = null;
 
-
     private DcMotor intake = null;
     private DcMotor liftMotor = null;
     private DcMotor liftMotor2 = null;
 
-    private Servo liftLeft = null;
-    private Servo liftRight = null;
+    private CRServo ramp = null;
+    private Servo claw= null;
     private Servo airplane = null;
     private Servo stageDoor = null;
 
     private boolean intakeRun = false;
     private boolean negative = false;
+
+//    public enum LiftState {
+//        LIFT_RETRACT,
+//        LIFT_EXTEND
+//    }
+//    LiftState liftState = LiftState.LIFT_EXTEND;
+
+    ElapsedTime liftTimer = new ElapsedTime();
+
+
+
 
 
     @Override
@@ -48,11 +58,12 @@ public class TeleOp23 extends LinearOpMode {
         intake = hardwareMap.get(DcMotor.class, "intake");
         liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
         liftMotor2 = hardwareMap.get(DcMotor.class, "liftMotor2");
-//
-//        liftLeft = hardwareMap.get(Servo.class, "liftLeft");
-//        liftRight = hardwareMap.get(Servo.class, "liftRight");
-//        airplane = hardwareMap.get(Servo.class, "airplane");
+        ramp = hardwareMap.get(CRServo.class, "ramp");
+        claw = hardwareMap.get(Servo.class, "claw");
+        airplane = hardwareMap.get(Servo.class, "airplane");
         stageDoor = hardwareMap.get(Servo.class, "stageDoor");
+
+
 
         frontLeft.setDirection(DcMotor.Direction.FORWARD);
         frontRight.setDirection(DcMotor.Direction.REVERSE);
@@ -60,7 +71,7 @@ public class TeleOp23 extends LinearOpMode {
         backRight.setDirection(DcMotor.Direction.FORWARD);
         intake.setDirection(DcMotor.Direction.FORWARD);
         liftMotor.setDirection(DcMotor.Direction.FORWARD);
-        liftMotor2.setDirection(DcMotor.Direction.FORWARD);
+        liftMotor2.setDirection(DcMotor.Direction.REVERSE);
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -69,23 +80,24 @@ public class TeleOp23 extends LinearOpMode {
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-//        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        liftMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //
-//        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        liftMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
-        stageDoor.setPosition(-0.5);
+        stageDoor.setPosition(1);
 
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
-        double intakePower = 0;
 
         //         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
+
+        liftMotor.setPower(1.0);
 
 
         while (opModeIsActive()) {
@@ -98,6 +110,7 @@ public class TeleOp23 extends LinearOpMode {
             double frontRightPower = (ypower - xpower - rpower) / denom;
             double backLeftPower = (ypower - xpower + rpower) / denom;
             double backRightPower = (ypower + xpower - rpower) / denom;
+
 
             if (gamepad1.dpad_up) {
                 frontLeftPower = 1;
@@ -112,15 +125,15 @@ public class TeleOp23 extends LinearOpMode {
                 backRightPower = -1;
             }
             if (gamepad1.dpad_left) {
-                frontLeftPower = 1;
+                frontLeftPower = -1;
                 frontRightPower = 1;
-                backLeftPower = -1;
+                backLeftPower = 1;
                 backRightPower = -1;
             }
             if (gamepad1.dpad_right) {
-                frontLeftPower = -1;
+                frontLeftPower = 1;
                 frontRightPower = -1;
-                backLeftPower = 1;
+                backLeftPower = -1;
                 backRightPower = 1;
             }
 
@@ -130,57 +143,80 @@ public class TeleOp23 extends LinearOpMode {
                 backLeftPower = backLeftPower / 3;
                 backRightPower = backRightPower / 3;
             }
-
+//
 
             if (gamepad2.dpad_up) {
-                intakeRun = true;
-                negative = false;
-            }
-            if (gamepad2.dpad_down) {
-                intakeRun = true;
-                negative = true;
-            }
-            if (gamepad2.dpad_left) {
-                intakeRun = false;
-            }
-
-            if (intakeRun == false) {
-                intake.setPower(0);
-            }
-            if (intakeRun == true && negative == true) {
-                intake.setPower(-1);
-            }
-            if (intakeRun == true && negative == false) {
                 intake.setPower(1);
             }
+            else if (gamepad2.dpad_down) {
+                intake.setPower(-1);
+            }
+            else if (gamepad2.dpad_left) {
+                intake.setPower(0);
+            }
 
 
-            liftMotor.setPower(gamepad2.right_stick_y / 0.5);
-            liftMotor2.setPower(gamepad2.right_stick_y / 0.5);
 
-//            if (gamepad2.left_trigger > 0) {
-//                liftLeft.setPosition(0);
-//                liftRight.setPosition(0);
-//            }
-//
-//            if (gamepad2.right_trigger > 0) {
-//                liftLeft.setPosition(-0.1);
-//                liftRight.setPosition(0.1);
-//            }
-//
-//            if (gamepad2.a) {
-//                airplane.setPosition(0.2);
-//            }
+            if(gamepad2.right_stick_y > 0.15){
+                liftMotor.setPower(gamepad2.right_stick_y);
+                liftMotor2.setPower(gamepad2.right_stick_y);
+            }
+            else if(gamepad2.right_stick_y < -0.15){
+                liftMotor2.setPower(gamepad2.right_stick_y);
+                liftMotor.setPower(gamepad2.right_stick_y);
+            }
+            else{
+                liftMotor2.setPower(0);
+                liftMotor.setPower(0);
+            }
+
+            if (gamepad2.left_trigger > 0) {
+                claw.setPosition(1);
+            }
+
+            if (gamepad2.right_trigger > 0) {
+                claw.setPosition(0.8);
+            }
+
+            if (gamepad2.left_stick_y > 0.15){
+                ramp.setPower(1);
+            }
+
+            else if (gamepad2.left_stick_y < -0.15){
+                ramp.setPower(-1);
+            }
+
+            else{
+                ramp.setPower(0);
+            }
+
+            if (gamepad2.a) {
+                airplane.setPosition(-0.05);
+            }
 
             if (gamepad2.x) {
-                stageDoor.setPosition(-0.5);
+                stageDoor.setPosition(1);
                 telemetry.addData("pos", stageDoor.getPosition());
             }
 
             if (gamepad2.y) {
-                stageDoor.setPosition(1);
+                stageDoor.setPosition(0.35);
                 telemetry.addData("pos", stageDoor.getPosition());
             }
+
+
+//            switch (liftState) {
+//                case LIFT_EXTEND:
+//                    // Waiting for some input
+//                    if (gamepad2.right_trigger > 0) {
+//                        // right trigger is pressed, start extending
+//                        sleep(3000);
+//             //           liftMotor.setPosition(0);
+//                        // close claw code here
+//                        liftState = LiftState.LIFT_RETRACT;
+//                    }
+//                    break;
+//            }
 
             telemetry.update();
 
@@ -188,7 +224,6 @@ public class TeleOp23 extends LinearOpMode {
             frontRight.setPower(frontRightPower);
             backLeft.setPower(backLeftPower);
             backRight.setPower(backRightPower);
-            intake.setPower(intakePower);
         }
 
     }

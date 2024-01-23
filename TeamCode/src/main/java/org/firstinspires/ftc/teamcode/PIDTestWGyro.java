@@ -92,7 +92,7 @@ public class PIDTestWGyro extends LinearOpMode {
 
     // Step through each leg of the path,
     // Note: Reverse movement is obtained by setting a negative distance (not speed)
-    ctrlDrive(DRIVE_SPEED,  3,  3, 3, 3, 200, 20);
+    ctrlDrive(DRIVE_SPEED,  5,  5, 5, 5, 200, 20);
 
     telemetry.addData("Path", "Complete");
     telemetry.update();
@@ -110,10 +110,10 @@ public class PIDTestWGyro extends LinearOpMode {
             if (opModeIsActive()) {
 
                 // Determine new target position, and pass to motor controller
-                newLeftFrontTarget = frontLeft.getCurrentPosition() + (int)(leftFInches * COUNTS_PER_INCH);
-                newRightFrontTarget = frontRight.getCurrentPosition() + (int)(rightFInches * COUNTS_PER_INCH);
-                newRightBackTarget = backRight.getCurrentPosition() + (int)(rightBInches * COUNTS_PER_INCH);
-                newLeftBackTarget = backLeft.getCurrentPosition() + (int)(leftBInches * COUNTS_PER_INCH);
+                newLeftFrontTarget = frontLeft.getCurrentPosition() + (int)(leftFInches);
+                newRightFrontTarget = frontRight.getCurrentPosition() + (int)(rightFInches);
+                newRightBackTarget = backRight.getCurrentPosition() + (int)(rightBInches);
+                newLeftBackTarget = backLeft.getCurrentPosition() + (int)(leftBInches);
 
                 frontLeft.setTargetPosition(newLeftFrontTarget);
                 frontRight.setTargetPosition(newRightFrontTarget);
@@ -189,8 +189,6 @@ public class PIDTestWGyro extends LinearOpMode {
                 frontRight.setPower(0);
                 backLeft.setPower(0);
                 backRight.setPower(0);
-
-                sleep(250);   // optional pause after each move.
             }
     }
 

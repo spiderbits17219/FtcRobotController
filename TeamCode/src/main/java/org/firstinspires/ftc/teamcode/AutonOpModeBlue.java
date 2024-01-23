@@ -113,8 +113,6 @@ public class AutonOpModeBlue extends LinearOpMode {
                 telemetry.addData("Exception: ", myPipeline.debug);
             }
 
-            Place myPlace;
-
             sleep(3000);
             telemetry.addData("RectArea: ", myPipeline.getRectArea());
             telemetry.addData("valueX", myPipeline.getRectX());
