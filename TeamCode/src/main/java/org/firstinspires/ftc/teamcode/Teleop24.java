@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp
 
-public class TeleOp23 extends LinearOpMode {
+public class Teleop24 extends LinearOpMode {
 
     //     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
