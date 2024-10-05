@@ -8,21 +8,15 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Ri6WTeleOpV2Drivetrain extends LinearOpMode {
 
-    private DcMotor frontLeftMotor;
-    private DcMotor frontRightMotor;
-    private DcMotor backLeftMotor;
-    private DcMotor backRightMotor;
-    private Servo servo;
-
-    private ElapsedTime runtime = new ElapsedTime();
+    private final ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public void runOpMode() {
-        frontLeftMotor = hardwareMap.get(DcMotor.class, "frontLeft");
-        frontRightMotor = hardwareMap.get(DcMotor.class, "frontRight");
-        backLeftMotor = hardwareMap.get(DcMotor.class, "backLeft");
-        backRightMotor = hardwareMap.get(DcMotor.class, "backRight");
-        servo = hardwareMap.get(Servo.class, "servo");
+        DcMotor frontLeftMotor = hardwareMap.get(DcMotor.class, "frontLeft");
+        DcMotor frontRightMotor = hardwareMap.get(DcMotor.class, "frontRight");
+        DcMotor backLeftMotor = hardwareMap.get(DcMotor.class, "backLeft");
+        DcMotor backRightMotor = hardwareMap.get(DcMotor.class, "backRight");
+        Servo servo = hardwareMap.get(Servo.class, "servo");
 
         frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
