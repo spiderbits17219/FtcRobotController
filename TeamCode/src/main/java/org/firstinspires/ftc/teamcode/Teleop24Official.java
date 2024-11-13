@@ -2,15 +2,12 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp
 
-public class Teleop24 extends LinearOpMode {
+public class Teleop24Official extends LinearOpMode {
 
     //     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -19,23 +16,21 @@ public class Teleop24 extends LinearOpMode {
     private DcMotor backLeft = null;
     private DcMotor backRight = null;
 
-    private DcMotor intake = null;
+    private DcMotor liftMotor3 = null;
     private DcMotor liftMotor = null;
     private DcMotor liftMotor2 = null;
+  //  private DcMotor intake = null;
 
-    private CRServo ramp = null;
-    private Servo claw= null;
-    private Servo airplane = null;
-    private Servo stageDoor = null;
 
-    private boolean intakeRun = false;
+
+//    private boolean intakeRun = false;
     private boolean negative = false;
 
-//    public enum LiftState {
-//        LIFT_RETRACT,
-//        LIFT_EXTEND
-//    }
-//    LiftState liftState = LiftState.LIFT_EXTEND;
+    public enum LiftState {
+        LIFT_RETRACT,
+        LIFT_EXTEND
+    }
+    LiftState liftState = LiftState.LIFT_EXTEND;
 
     ElapsedTime liftTimer = new ElapsedTime();
 
@@ -55,23 +50,19 @@ public class Teleop24 extends LinearOpMode {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
-        intake = hardwareMap.get(DcMotor.class, "intake");
+        liftMotor3 = hardwareMap.get(DcMotor.class, "liftMotor3");
         liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
         liftMotor2 = hardwareMap.get(DcMotor.class, "liftMotor2");
-        ramp = hardwareMap.get(CRServo.class, "ramp");
-        claw = hardwareMap.get(Servo.class, "claw");
-        airplane = hardwareMap.get(Servo.class, "airplane");
-        stageDoor = hardwareMap.get(Servo.class, "stageDoor");
 
 
 
-        frontLeft.setDirection(DcMotor.Direction.FORWARD);
-        frontRight.setDirection(DcMotor.Direction.REVERSE);
+        frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        frontRight.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.FORWARD);
-        intake.setDirection(DcMotor.Direction.FORWARD);
-        liftMotor.setDirection(DcMotor.Direction.FORWARD);
+        liftMotor.setDirection(DcMotor.Direction.REVERSE);
         liftMotor2.setDirection(DcMotor.Direction.REVERSE);
+        liftMotor3.setDirection(DcMotor.Direction.FORWARD);
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -79,17 +70,15 @@ public class Teleop24 extends LinearOpMode {
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftMotor3.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
-        stageDoor.setPosition(1);
-
-        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
 
@@ -97,7 +86,17 @@ public class Teleop24 extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
-        liftMotor.setPower(1.0);
+        liftMotor.setPower(0);
+        liftMotor2.setPower(0);
+        liftMotor3.setPower(0);
+
+
+
+
+        int liftMotorStartPosition = liftMotor.getCurrentPosition();
+        int liftMotor2StartPosition = liftMotor2.getCurrentPosition();
+        int liftMotor3StartPosition = liftMotor3.getCurrentPosition();
+
 
 
         while (opModeIsActive()) {
@@ -146,18 +145,41 @@ public class Teleop24 extends LinearOpMode {
 //
 
             if (gamepad2.dpad_up) {
-                intake.setPower(1);
+                liftMotor3.setPower(1);
             }
             else if (gamepad2.dpad_down) {
-                intake.setPower(-1);
+                liftMotor3.setPower(-1);
             }
-            else if (gamepad2.dpad_left) {
-                intake.setPower(0);
+            else {
+                liftMotor3.setPower(0);
             }
 
 
 
-            if(gamepad2.right_stick_y > 0.15){
+//            if(gamepad2.right_stick_y > 0.15){
+//                liftMotor.setPower(gamepad2.right_stick_y);
+//                liftMotor2.setPower(gamepad2.right_stick_y);
+//            }
+//            else if(gamepad2.right_stick_y < -0.15){
+//                liftMotor2.setPower(gamepad2.right_stick_y);
+//                liftMotor.setPower(gamepad2.right_stick_y);
+//            }
+//            else{
+//                liftMotor2.setPower(0);
+//                liftMotor.setPower(0);
+//            }
+//
+            if (gamepad2.a) {
+                liftMotor.setTargetPosition(liftMotorStartPosition);
+                liftMotor2.setTargetPosition(liftMotor2StartPosition);
+                liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
+            else if (gamepad2.x) {
+                liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
+            else if(gamepad2.right_stick_y > 0.15){
                 liftMotor.setPower(gamepad2.right_stick_y);
                 liftMotor2.setPower(gamepad2.right_stick_y);
             }
@@ -170,53 +192,6 @@ public class Teleop24 extends LinearOpMode {
                 liftMotor.setPower(0);
             }
 
-            if (gamepad2.left_trigger > 0) {
-                claw.setPosition(1);
-            }
-
-            if (gamepad2.right_trigger > 0) {
-                claw.setPosition(0.8);
-            }
-
-            if (gamepad2.left_stick_y > 0.15){
-                ramp.setPower(1);
-            }
-
-            else if (gamepad2.left_stick_y < -0.15){
-                ramp.setPower(-1);
-            }
-
-            else{
-                ramp.setPower(0);
-            }
-
-            if (gamepad2.a) {
-                airplane.setPosition(-0.05);
-            }
-
-            if (gamepad2.x) {
-                stageDoor.setPosition(1);
-                telemetry.addData("pos", stageDoor.getPosition());
-            }
-
-            if (gamepad2.y) {
-                stageDoor.setPosition(0.35);
-                telemetry.addData("pos", stageDoor.getPosition());
-            }
-
-
-//            switch (liftState) {
-//                case LIFT_EXTEND:
-//                    // Waiting for some input
-//                    if (gamepad2.right_trigger > 0) {
-//                        // right trigger is pressed, start extending
-//                        sleep(3000);
-//             //           liftMotor.setPosition(0);
-//                        // close claw code here
-//                        liftState = LiftState.LIFT_RETRACT;
-//                    }
-//                    break;
-//            }
 
             telemetry.update();
 
@@ -227,5 +202,4 @@ public class Teleop24 extends LinearOpMode {
         }
 
     }
-
 }
