@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 public class LEDRevBlinkinV2 {
 
+
         /** Configuration File
          ** Control Hub:
          * Servo Port 05: leftlights
@@ -26,14 +27,13 @@ public class LEDRevBlinkinV2 {
         @TeleOp(group = "Examples")
         public class ColorBlinkinSensorCode extends LinearOpMode {
 
-            // Declare the sensors and hardware
             ColorSensor sensorColor;
             DistanceSensor sensorDistance;
             RevBlinkinLedDriver leftLights;
             RevBlinkinLedDriver rightLights;
 
             boolean blinkinTimer = false;
-            int blinkinDelay = 2000; // Don't recommend using during teleop
+            int blinkinDelay = 2000;
 
             @Override
             public void runOpMode() throws InterruptedException {
