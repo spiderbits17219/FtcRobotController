@@ -49,8 +49,8 @@ public class Teleop24Official extends LinearOpMode {
         liftMotor3 = hardwareMap.get(DcMotor.class, "liftMotor3");
         liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
         liftMotor2 = hardwareMap.get(DcMotor.class, "liftMotor2");
-        sensorColor = hardwareMap.get(ColorSensor.class, "sensor_color_distance");
-        sensorDistance = hardwareMap.get(DistanceSensor.class, "sensor_color_distance");
+        sensorColor = hardwareMap.get(ColorSensor.class, "sensor_color");
+        sensorDistance = hardwareMap.get(DistanceSensor.class, "sensor_distance");
 
 
         float hsvValues[] = {0F, 0F, 0F};
