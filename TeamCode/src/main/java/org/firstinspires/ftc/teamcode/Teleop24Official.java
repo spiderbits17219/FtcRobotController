@@ -1,8 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.app.Activity;
+import android.graphics.Color;
+import android.view.View;
+
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp
@@ -19,22 +26,11 @@ public class Teleop24Official extends LinearOpMode {
     private DcMotor liftMotor3 = null;
     private DcMotor liftMotor = null;
     private DcMotor liftMotor2 = null;
-  //  private DcMotor intake = null;
 
-
-
-//    private boolean intakeRun = false;
-    private boolean negative = false;
-
-    public enum LiftState {
-        LIFT_RETRACT,
-        LIFT_EXTEND
-    }
-    LiftState liftState = LiftState.LIFT_EXTEND;
-
-    ElapsedTime liftTimer = new ElapsedTime();
-
-
+    private ColorSensor sensorColor;
+   private DistanceSensor sensorDistance;
+   private RevBlinkinLedDriver leftLights;
+  private  RevBlinkinLedDriver rightLights;
 
 
 
@@ -53,8 +49,19 @@ public class Teleop24Official extends LinearOpMode {
         liftMotor3 = hardwareMap.get(DcMotor.class, "liftMotor3");
         liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
         liftMotor2 = hardwareMap.get(DcMotor.class, "liftMotor2");
+        sensorColor = hardwareMap.get(ColorSensor.class, "sensor_color_distance");
+        sensorDistance = hardwareMap.get(DistanceSensor.class, "sensor_color_distance");
 
 
+        float hsvValues[] = {0F, 0F, 0F};
+        final float values[] = hsvValues;
+
+        final double SCALE_FACTOR = 255;
+
+        int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
+        final View relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
+
+        initHardware();
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
@@ -78,11 +85,10 @@ public class Teleop24Official extends LinearOpMode {
         liftMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
-//        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
 
-        //         // Wait for the game to start (driver presses PLAY)
+// Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
 
@@ -91,12 +97,9 @@ public class Teleop24Official extends LinearOpMode {
         liftMotor3.setPower(0);
 
 
-
-
         int liftMotorStartPosition = liftMotor.getCurrentPosition();
         int liftMotor2StartPosition = liftMotor2.getCurrentPosition();
         int liftMotor3StartPosition = liftMotor3.getCurrentPosition();
-
 
 
         while (opModeIsActive()) {
@@ -156,19 +159,6 @@ public class Teleop24Official extends LinearOpMode {
 
 
 
-//            if(gamepad2.right_stick_y > 0.15){
-//                liftMotor.setPower(gamepad2.right_stick_y);
-//                liftMotor2.setPower(gamepad2.right_stick_y);
-//            }
-//            else if(gamepad2.right_stick_y < -0.15){
-//                liftMotor2.setPower(gamepad2.right_stick_y);
-//                liftMotor.setPower(gamepad2.right_stick_y);
-//            }
-//            else{
-//                liftMotor2.setPower(0);
-//                liftMotor.setPower(0);
-//            }
-//
             if (gamepad2.a) {
                 liftMotor.setTargetPosition(liftMotorStartPosition);
                 liftMotor2.setTargetPosition(liftMotor2StartPosition);
@@ -192,6 +182,14 @@ public class Teleop24Official extends LinearOpMode {
                 liftMotor.setPower(0);
             }
 
+            Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR),
+                    (int) (sensorColor.green() * SCALE_FACTOR),
+                    (int) (sensorColor.blue() * SCALE_FACTOR),
+                    hsvValues);
+
+            int detectedColor = getDetectedColor();
+
+            setBlinkinColor(detectedColor);
 
             telemetry.update();
 
@@ -199,7 +197,54 @@ public class Teleop24Official extends LinearOpMode {
             frontRight.setPower(frontRightPower);
             backLeft.setPower(backLeftPower);
             backRight.setPower(backRightPower);
+
         }
 
+
+    }
+    private void initHardware() {
+        leftLights = hardwareMap.get(RevBlinkinLedDriver.class, "leftLights");
+        rightLights = hardwareMap.get(RevBlinkinLedDriver.class, "rightLights");
+    }
+
+    private void setBlinkinColor(int detectedColor) {
+        switch (detectedColor) {
+            case 1: // Red
+                leftLights.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+                rightLights.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+                break;
+            case 2: // Yellow
+                leftLights.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
+                rightLights.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
+                break;
+            case 3: // Blue
+                leftLights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
+                rightLights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
+                break;
+            case 4: // White
+                leftLights.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE);
+                rightLights.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE);
+                break;
+            default:
+                leftLights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+                rightLights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+                break;
+        }
+    }
+
+    private int getDetectedColor() {
+        int red = sensorColor.red();
+        int green = sensorColor.green();
+        int blue = sensorColor.blue();
+
+        if (red > green && red > blue) {
+            return 1; // Red
+        } else if (green > red && green > blue) {
+            return 2; // Yellow
+        } else if (blue > red && blue > green) {
+            return 3; // Blue
+        } else {
+            return 4; // White
+        }
     }
 }
