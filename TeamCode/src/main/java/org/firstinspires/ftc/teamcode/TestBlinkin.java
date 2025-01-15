@@ -18,3 +18,22 @@
         //}
     //}
 //}
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+public class Main extends LinearOpMode {
+    ColorSensor colorSensor;
+    @Override
+    public void runOpMode() throws InterruptedException {
+        colorSensor = hardwareMap.get(ColorSensor.class, "sensor_color");
+        waitForStart();
+        while (opModeIsActive()) {
+            if (colorSensor.red() > colorSensor.blue()) {
+                telemetry.addData("Color", "Red");
+            } else if (colorSensor.blue() > colorSensor.red()) {
+                telemetry.addData("Color", "Blue");
+            }
+            telemetry.update();
+        }
+    }
+}
